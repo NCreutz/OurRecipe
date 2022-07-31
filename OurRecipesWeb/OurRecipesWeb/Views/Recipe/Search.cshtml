@@ -1,0 +1,47 @@
+﻿@model SearchRecipe
+
+@{
+    ViewData["Title"] = "Search Recipe";
+}
+
+
+
+
+<h1>Search</h1>
+<h4>Recipes</h4>
+
+<form asp-action="Search">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row">
+        <div class="col-sm">
+            <label asp-for="Title" class="control-label">Titel</label>
+            @if (Model != null && !String.IsNullOrEmpty(Model.Title))
+            {
+                <input asp-for="Title" class="form-control" value="@Model.Title" />
+            }
+            else
+            {
+                <input asp-for="Title" class="form-control" value="" />
+            }
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm">
+            <label asp-for="Ingredients" class="control-label">Ingredienser</label>
+            @if (Model != null && !String.IsNullOrEmpty(Model.Ingredients))
+            {
+                <input asp-for="Ingredients" class="form-control" value="@Model.Ingredients" />
+            }
+            else
+            {
+                <input asp-for="Ingredients" class="form-control" value="" />
+            }
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <input type="submit" value="Search" class="btn btn-primary" />
+        </div>
+
+    </div>
+</form>
