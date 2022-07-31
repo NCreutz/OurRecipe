@@ -45,3 +45,44 @@
 
     </div>
 </form>
+@if (Model != null && Model.result != null)
+{
+    foreach (var recipe in Model.result)
+    {
+        <div class="row">
+            <div class="col-sm">
+                <label class="control-label">Titel</label>
+                <input asp-for="@recipe.Title" class="form-control" readonly />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm">
+                <label class="control-label">Beskrivelse</label>
+                <textarea asp-for="@recipe.Description" class="form-control" rows="15" cols="50" readonly></textarea>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm">
+                <label class="control-label">Ingredienser</label>
+                <textarea asp-for="@recipe.Ingredients" class="form-control" rows="15" cols="50" readonly></textarea>
+                <span asp-validation-for="@recipe.Ingredients" class="text-danger"></span>
+            </div>
+            <div class="col-sm">
+                <label class="control-label">Fremgangsmåde</label>
+                <textarea asp-for="@recipe.CourseOfAction" class="form-control" rows="15" cols="50" readonly></textarea>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm">
+                <label class="control-label">Inspiration</label>
+                <input asp-for="@recipe.Reference" class="form-control" readonly />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm">
+                <label class="control-label">Forfatter</label>
+                <input asp-for="@recipe.Author.Name" class="form-control" readonly />
+            </div>
+        </div>
+    }
+}

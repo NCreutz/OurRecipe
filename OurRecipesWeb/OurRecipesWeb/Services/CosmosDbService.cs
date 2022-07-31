@@ -11,6 +11,7 @@
     public class CosmosDbService : ICosmosDbService
     {
         private Container _container;
+        List<Recipe> results = new List<Recipe>();
 
         public CosmosDbService(
             CosmosClient dbClient,
@@ -47,7 +48,7 @@
         public async Task<IEnumerable<Recipe>> GetItemsAsync(string queryString)
         {
             var query = this._container.GetItemQueryIterator<Recipe>(new QueryDefinition(queryString));
-            List<Recipe> results = new List<Recipe>();
+            
             while (query.HasMoreResults)
             {
                 var response = await query.ReadNextAsync();
@@ -57,10 +58,15 @@
 
             return results;
         }
-        
+
         public async Task UpdateItemAsync(string id, Recipe Recipe)
         {
             await this._container.UpsertItemAsync<Recipe>(Recipe, new PartitionKey(id));
+        }
+
+        public IEnumerable<Recipe> GetAllItemsCached()
+        {
+            return results;
         }
     }
 }

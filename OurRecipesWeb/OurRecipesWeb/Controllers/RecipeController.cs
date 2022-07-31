@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OurRecipesWeb.Models;
 using OurRecipesWeb.Services;
+using System.Text.RegularExpressions;
 
 namespace OurRecipesWeb.Controllers
 {
@@ -9,7 +10,7 @@ namespace OurRecipesWeb.Controllers
 
         private readonly ICosmosDbService _cosmosDbService;
 
-        
+
         public RecipeController(ICosmosDbService cosmosDbService)
         {
             _cosmosDbService = cosmosDbService;
@@ -55,6 +56,9 @@ namespace OurRecipesWeb.Controllers
         {
             if (ModelState.IsValid)
             {
+                IEnumerable<Recipe> recipes = _cosmosDbService.GetAllItemsCached();
+                IEnumerable<Recipe> enumerable = search(searchRecipe, recipes);
+                searchRecipe.result = enumerable;
                 return View(searchRecipe);
             }
 
@@ -65,6 +69,30 @@ namespace OurRecipesWeb.Controllers
         public async Task<IActionResult> Show()
         {
             return View(await _cosmosDbService.GetItemsAsync("SELECT * FROM c"));
+        }
+
+        private IEnumerable<Recipe> search(SearchRecipe searchRecipe, IEnumerable<Recipe> recipes)
+        {
+            List<string> stringList = searchRecipe.Title.Split(' ').ToList();
+            List<string> stringListChanged = AddANDOperator(stringList);
+
+            string regex = String.Format("({0})", String.Join("", stringListChanged.ToArray()));
+
+            var parser = new Regex(regex, RegexOptions.Compiled);
+            IEnumerable<Recipe> result =
+                recipes.Where(recipe => parser.IsMatch(recipe.Title)).ToList();
+            return result;
+        }
+
+        private List<string> AddANDOperator(List<string> searchList)
+        {
+            List<string> stringListChanged = new List<string>();
+            foreach (string word in searchList)
+            {
+                stringListChanged.Add("(?=.*" + word + ")");
+            }
+
+            return stringListChanged;
         }
 
     }
